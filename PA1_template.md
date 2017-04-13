@@ -1,9 +1,4 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
 
 ---
@@ -37,48 +32,139 @@ The dataset is stored in a comma-separated-value (CSV) file and there are a tota
 
 ###First step is to read data from working directory and look at summary
 
-```{r readdata}
+
+```r
         library(dplyr)
+```
+
+```
+## Warning: package 'dplyr' was built under R version 3.3.3
+```
+
+```
+## 
+## Attaching package: 'dplyr'
+```
+
+```
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+```
+
+```
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+```
+
+```r
         library(ggplot2)
+```
+
+```
+## Warning: package 'ggplot2' was built under R version 3.3.3
+```
+
+```r
         c1<-read.csv("activity.csv", stringsAsFactors = FALSE)
         c1$steps<-as.numeric(c1$steps)
         d1<-tbl_df(c1)
         summary(d1)
+```
+
+```
+##      steps            date              interval     
+##  Min.   :  0.00   Length:17568       Min.   :   0.0  
+##  1st Qu.:  0.00   Class :character   1st Qu.: 588.8  
+##  Median :  0.00   Mode  :character   Median :1177.5  
+##  Mean   : 37.38                      Mean   :1177.5  
+##  3rd Qu.: 12.00                      3rd Qu.:1766.2  
+##  Max.   :806.00                      Max.   :2355.0  
+##  NA's   :2304
+```
+
+```r
         d1
-        
+```
+
+```
+## # A tibble: 17,568 × 3
+##    steps       date interval
+##    <dbl>      <chr>    <int>
+## 1     NA 2012-10-01        0
+## 2     NA 2012-10-01        5
+## 3     NA 2012-10-01       10
+## 4     NA 2012-10-01       15
+## 5     NA 2012-10-01       20
+## 6     NA 2012-10-01       25
+## 7     NA 2012-10-01       30
+## 8     NA 2012-10-01       35
+## 9     NA 2012-10-01       40
+## 10    NA 2012-10-01       45
+## # ... with 17,558 more rows
 ```
 #                What is mean total number of steps taken per day?
 
 ###Calculate the total number of steps taken per day
 
-```{r stepnumber}
+
+```r
         steps<-d1 
         steps2<-filter(steps,!is.na(steps))
         steps3<-group_by(steps2,date)
         steps4<-summarize(steps3,steps=sum(steps))
         steps4
-       
-     
+```
+
+```
+## # A tibble: 53 × 2
+##          date steps
+##         <chr> <dbl>
+## 1  2012-10-02   126
+## 2  2012-10-03 11352
+## 3  2012-10-04 12116
+## 4  2012-10-05 13294
+## 5  2012-10-06 15420
+## 6  2012-10-07 11015
+## 7  2012-10-09 12811
+## 8  2012-10-10  9900
+## 9  2012-10-11 10304
+## 10 2012-10-12 17382
+## # ... with 43 more rows
 ```
 ### See Plot 1 - Make a histogram of the total number of steps taken each day
 
-```{r histogram}
+
+```r
         g<-ggplot(steps4,aes(x=steps))
         plot1<-g+geom_histogram(fill="orange", binwidth=500)+
 labs(title="Plot 1 - Steps taken each day", x="Steps each day(binwidth=500)",y="Frequency")
        plot1
 ```
 
+![](PA1_template_files/figure-html/histogram-1.png)<!-- -->
+
 ### Calculate and report the mean and median of the total number of steps taken per day
 
-```{r MeanMedianSteps}
 
+```r
 meansteps<-mean(steps4$steps)
 mediansteps<-median(steps4$steps)
 
 meansteps
+```
 
+```
+## [1] 10766.19
+```
+
+```r
 mediansteps
+```
+
+```
+## [1] 10765
 ```
 
 
@@ -86,7 +172,8 @@ mediansteps
 
 ### see Plot2  Make a time series plot (i.e.type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
-```{r plot2}
+
+```r
  intvl<-d1 
         intvl2<-filter(intvl,!is.na(steps))
         intvl3<-group_by(intvl2,interval)
@@ -95,11 +182,21 @@ mediansteps
         plot2<-g+geom_line(color="blue")+labs(title="Plot 2 - Average Daily Activity Pattern")
         plot2
 ```
+
+![](PA1_template_files/figure-html/plot2-1.png)<!-- -->
 ###Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
-```{r maxStepsIntvl}
+
+```r
 max<-intvl4[which.max(intvl4$steps),]
 max
+```
+
+```
+## # A tibble: 1 × 2
+##   interval    steps
+##      <int>    <dbl>
+## 1      835 206.1698
 ```
 
 
@@ -107,13 +204,19 @@ max
 #                        Imputing missing values
 
 ###Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
-```{r SumMissingValue}
+
+```r
 sum(is.na(d1$steps))
+```
+
+```
+## [1] 2304
 ```
 
 ###Devise a strategy for filling in all of the missing values in the dataset. I will use the mean/median for that 5 min interval.
 
-```{r FillInMissing}
+
+```r
 df<-d1
 missing<-is.na(df$steps)
 mean5min<-tapply(df$steps, df$interval, mean, na.rm=TRUE)
@@ -121,13 +224,19 @@ df$steps[missing]<-mean5min[as.character(df$interval[missing])]
 ```
 ####proof of no missing values in new data frame is following sum=0
 
-```{r ProofNoMissing}
+
+```r
 sum(is.na(df$steps))
+```
+
+```
+## [1] 0
 ```
 
 ###     See Plot 3   Make a histogram of the total number of steps taken each day. 
 
-```{r plot3}
+
+```r
         sfull<-df 
         sfull2<-filter(sfull,!is.na(steps))
         sfull3<-group_by(sfull2,date)
@@ -137,15 +246,28 @@ sum(is.na(df$steps))
 labs(title="Plot 3 - Steps taken each day", x="Steps each day(binwidth=500)",y="Frequency")
         plot3
 ```
+
+![](PA1_template_files/figure-html/plot3-1.png)<!-- -->
 ###Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? 
 
-```{r MeanMedianFullData}
+
+```r
 meanfull<-mean(sfull4$steps)
 medianfull<-median(sfull4$steps)
 
 meanfull
+```
 
+```
+## [1] 10766.19
+```
+
+```r
 medianfull
+```
+
+```
+## [1] 10766.19
 ```
 
 #####What is the impact of imputing missing data on the estimates of the total daily number of steps? 
@@ -157,16 +279,35 @@ medianfull
 
 ###Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.
 
-```{r WeekdayWeekendVariable}
+
+```r
 df2<-df
 df2$date<-as.Date(df2$date)
 df2<-mutate(df2,daytype=ifelse(weekdays(df2$date)=="Saturday"|weekdays(df2$date)=="Sunday","weekend","weekday"))
 df2
 ```
 
+```
+## # A tibble: 17,568 × 4
+##        steps       date interval daytype
+##        <dbl>     <date>    <int>   <chr>
+## 1  1.7169811 2012-10-01        0 weekday
+## 2  0.3396226 2012-10-01        5 weekday
+## 3  0.1320755 2012-10-01       10 weekday
+## 4  0.1509434 2012-10-01       15 weekday
+## 5  0.0754717 2012-10-01       20 weekday
+## 6  2.0943396 2012-10-01       25 weekday
+## 7  0.5283019 2012-10-01       30 weekday
+## 8  0.8679245 2012-10-01       35 weekday
+## 9  0.0000000 2012-10-01       40 weekday
+## 10 1.4716981 2012-10-01       45 weekday
+## # ... with 17,558 more rows
+```
+
 ### See plot 4  Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).   
 
-```{r plot4}
+
+```r
         intrl<-df2 
         intrl2<-group_by(intrl,interval,daytype)
         intrl3<-summarize(intrl2,steps=mean(steps))
@@ -174,6 +315,8 @@ df2
         plot4<-g+geom_line()+facet_wrap(~daytype,ncol=1,nrow=2)+labs(title="Plot 4 - Time Series plot of the 5-minute interval")
         plot4
 ```
+
+![](PA1_template_files/figure-html/plot4-1.png)<!-- -->
 
 
 
