@@ -184,6 +184,7 @@ mediansteps
 ```
 
 ![](PA1_template_files/figure-html/plot2-1.png)<!-- -->
+
 ###Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
 
@@ -213,7 +214,7 @@ sum(is.na(d1$steps))
 ## [1] 2304
 ```
 
-###Devise a strategy for filling in all of the missing values in the dataset. I will use the mean/median for that 5 min interval.
+###Devise a strategy for filling in all of the missing values in the dataset. I will use the mean for that 5 min interval.
 
 
 ```r

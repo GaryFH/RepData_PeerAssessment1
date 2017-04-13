@@ -48,17 +48,17 @@ The dataset is stored in a comma-separated-value (CSV) file and there are a tota
         steps2<-filter(steps,!is.na(steps))
         steps3<-group_by(steps2,date)
         steps4<-summarize(steps3,steps=sum(steps))
-        print(steps4)
+        steps4
        
      
 ```
-### Make a histogram of the total number of steps taken each day
+### See Plot 1 - Make a histogram of the total number of steps taken each day
 
 ```{r histogram}
         g<-ggplot(steps4,aes(x=steps))
         plot1<-g+geom_histogram(fill="orange", binwidth=500)+
 labs(title="Steps taken each day", x="Steps each day(binwidth=500)",y="Frequency")
-        print(plot1)
+       plot1
 ```
 
 ### Calculate and report the mean and median of the total number of steps taken per day
@@ -75,7 +75,7 @@ mediansteps
 
 #What is the average daily activity pattern?
 
-###Make a time series plot (i.e.type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
+### see Plot2  Make a time series plot (i.e.type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
 ```{r plot2}
  intvl<-d1 
@@ -115,7 +115,7 @@ df$steps[missing]<-mean5min[as.character(df$interval[missing])]
 sum(is.na(df$steps))
 ```
 
-###Make a histogram of the total number of steps taken each day. 
+###Make a histogram of the total number of steps taken each day. See Plot 3
 
 ```{r plot3}
         sfull<-df 
